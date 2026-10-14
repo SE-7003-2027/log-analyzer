@@ -76,7 +76,7 @@ func (e *Error) Caret() string {
 	return "  " + e.Expr + "\n  " + strings.Repeat(" ", e.Col-1) + "^"
 }
 
-func errorf(col int, format string, args ...any) *Error {
+func errorf(col int, format string, args ...any) error {
 	return &Error{Col: col, Msg: fmt.Sprintf(format, args...)}
 }
 
@@ -95,7 +95,7 @@ var oneCharOps = map[rune]tokenKind{
 }
 
 // lex splits expr into tokens, ending with a tokEOF token.
-func lex(expr string) ([]token, *Error) {
+func lex(expr string) ([]token, error) {
 	src := []rune(expr)
 	var toks []token
 
@@ -164,7 +164,7 @@ func lex(expr string) ([]token, *Error) {
 // lexString reads a double-quoted string at the start of src and returns its
 // unescaped contents and the number of runes consumed. `\"` and `\\` are
 // escapes; any other backslash is kept as-is so that regexes like `\d` work.
-func lexString(src []rune, col int) (string, int, *Error) {
+func lexString(src []rune, col int) (string, int, error) {
 	var b strings.Builder
 	for i := 1; i < len(src); i++ {
 		switch src[i] {

@@ -27,7 +27,7 @@ func (p *parser) next() token {
 }
 
 // parse parses a whole expression and requires that all input is consumed.
-func (p *parser) parse() (node, *Error) {
+func (p *parser) parse() (node, error) {
 	n, err := p.parseOr()
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func (p *parser) parse() (node, *Error) {
 	return n, nil
 }
 
-func (p *parser) parseOr() (node, *Error) {
+func (p *parser) parseOr() (node, error) {
 	left, err := p.parseAnd()
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func (p *parser) parseOr() (node, *Error) {
 	return left, nil
 }
 
-func (p *parser) parseAnd() (node, *Error) {
+func (p *parser) parseAnd() (node, error) {
 	left, err := p.parseUnary()
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (p *parser) parseAnd() (node, *Error) {
 	return left, nil
 }
 
-func (p *parser) parseUnary() (node, *Error) {
+func (p *parser) parseUnary() (node, error) {
 	if p.peek().Kind == tokNot {
 		p.next()
 		x, err := p.parseUnary()
@@ -82,7 +82,7 @@ func (p *parser) parseUnary() (node, *Error) {
 	return p.parsePrimary()
 }
 
-func (p *parser) parsePrimary() (node, *Error) {
+func (p *parser) parsePrimary() (node, error) {
 	if p.peek().Kind == tokLParen {
 		p.next()
 		n, err := p.parseOr()
@@ -97,7 +97,7 @@ func (p *parser) parsePrimary() (node, *Error) {
 	return p.parseComparison()
 }
 
-func (p *parser) parseComparison() (node, *Error) {
+func (p *parser) parseComparison() (node, error) {
 	field := p.next()
 	if field.Kind != tokIdent {
 		return nil, errorf(field.Col, "expected field, got %s", field.Kind)

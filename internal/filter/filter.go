@@ -26,7 +26,7 @@ func Compile(expr string) (*Filter, error) {
 	return &Filter{root: root}, nil
 }
 
-func compile(expr string) (node, *Error) {
+func compile(expr string) (node, error) {
 	toks, err := lex(expr)
 	if err != nil {
 		return nil, err
@@ -72,7 +72,7 @@ var fields = map[string]field{
 }
 
 // compare type-checks a single comparison and builds its evaluation node.
-func compare(fieldTok, op, value token) (node, *Error) {
+func compare(fieldTok, op, value token) (node, error) {
 	f, ok := fields[fieldTok.Text]
 	if !ok {
 		return nil, errorf(fieldTok.Col, "unknown field %q", fieldTok.Text)
@@ -137,7 +137,7 @@ func compare(fieldTok, op, value token) (node, *Error) {
 	}
 }
 
-func mismatch(fieldTok token, f field, value token) *Error {
+func mismatch(fieldTok token, f field, value token) error {
 	return errorf(value.Col, "cannot compare %s field %q with %s", f.typ, fieldTok.Text, value.Kind)
 }
 
